@@ -1,7 +1,19 @@
 {
   "name": "pizzeria-mirti",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Modern restaurant management system with customer website and admin dashboard",
+  "keywords": [
+    "restaurant",
+    "management",
+    "nextjs",
+    "react",
+    "typescript",
+    "mongodb",
+    "admin-dashboard"
+  ],
+  "license": "MIT",
+  "author": "Pizzeria Mirti",
   "scripts": {
     "build": "next build",
     "dev": "next dev",

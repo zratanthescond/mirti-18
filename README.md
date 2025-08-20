@@ -1,30 +1,104 @@
-# Change language component
+# Pizzeria Mirti
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+A modern restaurant management system built with Next.js, featuring a customer-facing website and comprehensive admin dashboard.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/zratanthesconds-projects/v0-change-language-component)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/IvOTE3lMPiv)
+## Features
 
-## Overview
+### Customer Website
+- Modern, responsive design
+- Interactive menu with categories
+- Shopping cart functionality
+- Order placement system
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+### Admin Dashboard
+- Real-time order management
+- Menu item management
+- Customer analytics
+- Sales reporting
+- Restaurant settings
+
+## Tech Stack
+
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui components
+- **Database**: MongoDB
+- **Authentication**: Custom admin authentication
+- **Deployment**: Vercel-ready
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- MongoDB database
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+\`\`\`bash
+git clone <your-repo-url>
+cd pizzeria-mirti
+\`\`\`
+
+2. Install dependencies:
+\`\`\`bash
+npm install
+\`\`\`
+
+3. Set up environment variables:
+\`\`\`bash
+cp .env.example .env.local
+\`\`\`
+
+4. Update `.env.local` with your MongoDB connection string:
+\`\`\`
+MONGODB_URI=your_mongodb_connection_string
+\`\`\`
+
+5. Initialize sample data (optional):
+\`\`\`bash
+npm run init-data
+\`\`\`
+
+6. Run the development server:
+\`\`\`bash
+npm run dev
+\`\`\`
+
+Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+## Admin Access
+
+- URL: `/admin`
+- Email: `admin@pizzeriamirti.com`
+- Password: `admin123`
 
 ## Deployment
 
-Your project is live at:
+This application is optimized for deployment on Vercel:
 
-**[https://vercel.com/zratanthesconds-projects/v0-change-language-component](https://vercel.com/zratanthesconds-projects/v0-change-language-component)**
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Add your `MONGODB_URI` environment variable in Vercel dashboard
+4. Deploy!
 
-## Build your app
+## Project Structure
 
-Continue building your app on:
+\`\`\`
+src/
+├── app/                    # Next.js app router
+│   ├── admin/             # Admin dashboard pages
+│   ├── api/               # API routes
+│   ├── cart/              # Shopping cart page
+│   ├── menu/              # Menu page
+│   └── page.tsx           # Homepage
+├── presentation/
+│   ├── components/        # Reusable components
+│   ├── hooks/            # Custom React hooks
+│   └── lib/              # Utility functions
+└── scripts/              # Database initialization scripts
+\`\`\`
 
-**[https://v0.dev/chat/projects/IvOTE3lMPiv](https://v0.dev/chat/projects/IvOTE3lMPiv)**
+## License
 
-## How It Works
-
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+MIT License - see LICENSE file for details.

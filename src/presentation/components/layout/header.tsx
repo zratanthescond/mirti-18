@@ -1,161 +1,92 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Button } from "@/src/presentation/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/src/presentation/components/ui/sheet"
-import { Menu, ShoppingBag } from "lucide-react"
-import { motion } from "framer-motion"
-import { useCart } from "@/src/presentation/providers"
+import { Menu, ShoppingCart } from "lucide-react"
+import { Button } from "@/presentation/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/presentation/components/ui/sheet"
+import { Badge } from "@/presentation/components/ui/badge"
+import { useCart } from "@/presentation/hooks/use-cart"
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const { state } = useCart()
-  const cartCount = state.items.length
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  const navigation = [
+    { name: "Home", href: "/" },
+    { name: "Menu", href: "/menu" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ]
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-500 ${
-        isScrolled ? "bg-white/90 backdrop-blur-md shadow-md py-2" : "bg-transparent py-4"
-      }`}
-    >
-      <div className="container flex items-center justify-between px-4">
-        <Link href="/" className="flex items-center">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative"
-          >
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2">
             <Image
               src="/images/pizzeria-mirti-logo.png"
-              alt="Pizzeria Mirti Logo"
-              width={isScrolled ? 80 : 100}
-              height={isScrolled ? 80 : 100}
-              className="transition-all duration-500"
+              alt="Pizzeria Mirti"
+              width={40}
+              height={40}
+              className="h-10 w-auto"
             />
-          </motion.div>
-        </Link>
+            <span className="text-xl font-bold text-primary">Pizzeria Mirti</span>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          {[
-            { name: "Home", href: "/" },
-            { name: "Menu", href: "/menu" },
-            { name: "About", href: "/about" },
-            { name: "Contact", href: "/contact" },
-          ].map((item, index) => (
-            <motion.div
-              key={item.name}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
-            >
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navigation.map((item) => (
               <Link
+                key={item.name}
                 href={item.href}
-                className={`font-heading text-lg transition-colors relative group ${
-                  isScrolled ? "text-brown" : "text-brown drop-shadow-md"
-                }`}
+                className="text-sm font-medium transition-colors hover:text-primary"
               >
                 {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red transition-all duration-300 group-hover:w-full"></span>
               </Link>
-            </motion.div>
-          ))}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
-            <Button asChild className="bg-red hover:bg-red-dark btn-hover-slide">
-              <Link href="/menu">Order Now</Link>
-            </Button>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-            className="relative"
-          >
+            ))}
+          </nav>
+
+          {/* Cart and Mobile Menu */}
+          <div className="flex items-center space-x-4">
+            {/* Cart Button */}
             <Link href="/cart">
-              <Button
-                variant="outline"
-                size="icon"
-                className="border-brown text-brown hover:bg-brown/10 bg-transparent"
-              >
-                <ShoppingBag className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
+              <Button variant="outline" size="sm" className="relative bg-transparent">
+                <ShoppingCart className="h-4 w-4" />
+                {state.itemCount > 0 && (
+                  <Badge variant="destructive" className="absolute -right-2 -top-2 h-5 w-5 rounded-full p-0 text-xs">
+                    {state.itemCount}
+                  </Badge>
                 )}
               </Button>
             </Link>
-          </motion.div>
-        </nav>
 
-        {/* Mobile Navigation */}
-        <div className="flex items-center space-x-4 md:hidden">
-          <Link href="/cart">
-            <Button
-              variant="outline"
-              size="icon"
-              className="border-brown text-brown hover:bg-brown/10 relative bg-transparent"
-            >
-              <ShoppingBag className="h-5 w-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Button>
-          </Link>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className={isScrolled ? "text-brown" : "text-brown"} />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="bg-cream">
-              <div className="flex flex-col h-full">
-                <div className="flex justify-center mb-8 mt-4">
-                  <Image src="/images/pizzeria-mirti-logo.png" alt="Pizzeria Mirti Logo" width={120} height={120} />
-                </div>
-                <nav className="flex flex-col items-center space-y-6 flex-grow justify-center">
-                  {[
-                    { name: "Home", href: "/" },
-                    { name: "Menu", href: "/menu" },
-                    { name: "About", href: "/about" },
-                    { name: "Contact", href: "/contact" },
-                  ].map((item) => (
+            {/* Mobile Menu */}
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild className="md:hidden">
+                <Button variant="ghost" size="sm">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col space-y-4 mt-8">
+                  {navigation.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="font-heading text-xl text-brown hover:text-red transition-colors"
+                      className="text-lg font-medium transition-colors hover:text-primary"
+                      onClick={() => setIsOpen(false)}
                     >
                       {item.name}
                     </Link>
                   ))}
-                </nav>
-                <div className="flex justify-center mb-8">
-                  <Button asChild className="bg-red hover:bg-red-dark text-white w-full btn-hover-slide">
-                    <Link href="/menu">Order Now</Link>
-                  </Button>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>

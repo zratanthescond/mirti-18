@@ -1,172 +1,97 @@
-"use client"
-
 import Link from "next/link"
 import Image from "next/image"
-import { Facebook, Instagram, Twitter } from "lucide-react"
-import { motion } from "framer-motion"
+import { MapPin, Phone, Mail } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-brown/90 to-brown z-0"></div>
-      <div className="absolute inset-0 opacity-5 bread-pattern z-0"></div>
-
-      <div className="container px-4 py-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Logo and About */}
-          <div className="flex flex-col items-center md:items-start">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-            >
+    <footer className="bg-gray-900 text-white">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
               <Image
                 src="/images/pizzeria-mirti-logo.png"
-                alt="Pizzeria Mirti Logo"
-                width={150}
-                height={150}
-                className="mb-4"
+                alt="Pizzeria Mirti"
+                width={32}
+                height={32}
+                className="h-8 w-auto"
               />
-            </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="text-sm text-cream/80 text-center md:text-left"
-            >
-              Authentic Italian bakery and deli products made with traditional recipes and the finest ingredients since
-              1970.
-            </motion.p>
+              <span className="text-xl font-bold">Pizzeria Mirti</span>
+            </div>
+            <p className="text-gray-400 text-sm">
+              Authentic Italian cuisine with fresh ingredients and traditional recipes, served with modern presentation.
+            </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <motion.h3
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-xl font-heading mb-4 text-center md:text-left text-cream"
-            >
-              Quick Links
-            </motion.h3>
-            <ul className="space-y-2 text-center md:text-left">
-              {[
-                { name: "Home", href: "/" },
-                { name: "Menu", href: "/menu" },
-                { name: "About Us", href: "/about" },
-                { name: "Contact", href: "/contact" },
-              ].map((link, index) => (
-                <motion.li
-                  key={link.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 * index }}
-                  viewport={{ once: true }}
-                >
-                  <Link href={link.href} className="text-cream/80 hover:text-white transition-colors">
-                    {link.name}
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Opening Hours */}
-          <div>
-            <motion.h3
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-xl font-heading mb-4 text-center md:text-left text-cream"
-            >
-              Opening Hours
-            </motion.h3>
-            <ul className="space-y-2 text-center md:text-left">
-              {["Monday - Thursday: 7am - 8pm", "Friday - Saturday: 7am - 9pm", "Sunday: 8am - 7pm"].map(
-                (hours, index) => (
-                  <motion.li
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 * index }}
-                    viewport={{ once: true }}
-                    className="text-cream/80"
-                  >
-                    {hours}
-                  </motion.li>
-                ),
-              )}
+            <h3 className="font-semibold mb-4">Quick Links</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/" className="text-gray-400 hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/menu" className="text-gray-400 hover:text-white transition-colors">
+                  Menu
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <motion.h3
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-xl font-heading mb-4 text-center md:text-left text-cream"
-            >
-              Contact Us
-            </motion.h3>
-            <ul className="space-y-2 text-center md:text-left">
-              {["Via Roma 123", "00100 Roma, Italy", "+39 06 1234 5678", "info@pizzeriamirti.com"].map(
-                (contact, index) => (
-                  <motion.li
-                    key={index}
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 * index }}
-                    viewport={{ once: true }}
-                    className="text-cream/80"
-                  >
-                    {contact}
-                  </motion.li>
-                ),
-              )}
+            <h3 className="font-semibold mb-4">Contact Info</h3>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-center space-x-2">
+                <MapPin className="h-4 w-4 text-gray-400" />
+                <span className="text-gray-400">Via Roma 123, 00100 Roma, Italy</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <Phone className="h-4 w-4 text-gray-400" />
+                <span className="text-gray-400">+39 06 1234 5678</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <Mail className="h-4 w-4 text-gray-400" />
+                <span className="text-gray-400">info@pizzeriamirti.com</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Hours */}
+          <div>
+            <h3 className="font-semibold mb-4">Opening Hours</h3>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li className="flex justify-between">
+                <span>Mon - Thu</span>
+                <span>11:00 - 22:00</span>
+              </li>
+              <li className="flex justify-between">
+                <span>Fri - Sat</span>
+                <span>11:00 - 23:00</span>
+              </li>
+              <li className="flex justify-between">
+                <span>Sunday</span>
+                <span>12:00 - 21:00</span>
+              </li>
             </ul>
           </div>
         </div>
 
-        {/* Social Media and Copyright */}
-        <div className="mt-12 pt-8 border-t border-cream/20 flex flex-col md:flex-row justify-between items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="flex space-x-4 mb-4 md:mb-0"
-          >
-            {[
-              { icon: <Facebook className="h-6 w-6" />, label: "Facebook" },
-              { icon: <Instagram className="h-6 w-6" />, label: "Instagram" },
-              { icon: <Twitter className="h-6 w-6" />, label: "Twitter" },
-            ].map((social, index) => (
-              <Link
-                key={social.label}
-                href="#"
-                className="text-cream/80 hover:text-white transition-colors transform hover:scale-110 duration-300"
-              >
-                {social.icon}
-                <span className="sr-only">{social.label}</span>
-              </Link>
-            ))}
-          </motion.div>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="text-sm text-cream/80"
-          >
-            &copy; {new Date().getFullYear()} Pizzeria Mirti. All rights reserved.
-          </motion.p>
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+          <p>&copy; 2024 Pizzeria Mirti. All rights reserved.</p>
         </div>
       </div>
     </footer>

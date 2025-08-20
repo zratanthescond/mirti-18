@@ -16,7 +16,13 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-    unoptimized: true,
+    unoptimized: false,
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['mongodb'],
+  },
+  env: {
+    MONGODB_URI: process.env.MONGODB_URI,
   },
 }
 

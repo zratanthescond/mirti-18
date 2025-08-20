@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useReducer, type ReactNode } from "react"
+import { ThemeProvider } from "@/presentation/components/theme-provider"
 
 interface CartItem {
   id: string
@@ -96,4 +97,12 @@ export function useCart() {
     throw new Error("useCart must be used within a CartProvider")
   }
   return context
+}
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+      <CartProvider>{children}</CartProvider>
+    </ThemeProvider>
+  )
 }
