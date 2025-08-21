@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { Plus, Edit, Trash2, Search } from "lucide-react"
+import { Plus, Edit, Trash2, Search, AlertCircle } from "lucide-react"
 
 interface MenuItem {
   id: string
@@ -22,6 +22,16 @@ interface MenuItem {
   image: string
   available: boolean
   popular: boolean
+  ingredients?: string[]
+  allergens?: string[]
+  nutritionalInfo?: {
+    calories: number
+    protein: number
+    carbs: number
+    fat: number
+  }
+  createdAt: string
+  updatedAt: string
 }
 
 const categories = ["flatbreads", "pizzas", "antipasti", "sandwiches", "calzones"]
@@ -33,53 +43,28 @@ export default function MenuManagementPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
   useEffect(() => {
     fetchMenuItems()
-  }, [])
+  }, [selectedCategory, searchTerm])
 
   const fetchMenuItems = async () => {
     try {
       setIsLoading(true)
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const params = new URLSearchParams()
+      if (selectedCategory !== "all") params.append("category", selectedCategory)
+      if (searchTerm) params.append("search", searchTerm)
 
-      const mockItems: MenuItem[] = [
-        {
-          id: "1",
-          name: "Bresaola & Arugula",
-          description: "Bresaola, fresh arugula, Parmigiano-Reggiano, lemon zest",
-          price: 18.0,
-          category: "flatbreads",
-          image: "/images/bresaola-arugula-flatbread.jpeg",
-          available: true,
-          popular: true,
-        },
-        {
-          id: "2",
-          name: "Margherita Classica",
-          description: "San Marzano tomatoes, fresh mozzarella, basil",
-          price: 14.5,
-          category: "pizzas",
-          image: "/images/classic-marinara.jpeg",
-          available: true,
-          popular: true,
-        },
-        {
-          id: "3",
-          name: "Carpaccio di Manzo",
-          description: "Thinly sliced raw beef, arugula, capers, Parmigiano",
-          price: 22.0,
-          category: "antipasti",
-          image: "/images/carpaccio-platter.jpeg",
-          available: true,
-          popular: false,
-        },
-      ]
+      const response = await fetch(`/api/admin/menu?${params}`)
+      if (!response.ok) throw new Error("Failed to fetch menu items")
 
-      setMenuItems(mockItems)
+      const data = await response.json()
+      setMenuItems(data.items)
     } catch (error) {
+      console.error("Error fetching menu items:", error)
+      setError("Failed to load menu items")
       toast({
         title: "Error",
         description: "Failed to fetch menu items",
@@ -90,33 +75,39 @@ export default function MenuManagementPage() {
     }
   }
 
-  const filteredItems = menuItems.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
-
-  const handleSaveItem = async (item: Omit<MenuItem, "id">) => {
+  const handleSaveItem = async (item: Omit<MenuItem, "id" | "createdAt" | "updatedAt">) => {
     try {
+      const url = editingItem ? `/api/admin/menu/${editingItem.id}` : "/api/admin/menu"
+      const method = editingItem ? "PUT" : "POST"
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(item),
+      })
+
+      if (!response.ok) throw new Error("Failed to save menu item")
+
+      const savedItem = await response.json()
+
       if (editingItem) {
-        // Update existing item
-        setMenuItems((prev) => prev.map((i) => (i.id === editingItem.id ? { ...item, id: editingItem.id } : i)))
+        setMenuItems((prev) => prev.map((i) => (i.id === editingItem.id ? savedItem : i)))
         toast({
           title: "Success",
           description: "Menu item updated successfully",
         })
       } else {
-        // Add new item
-        const newItem: MenuItem = { ...item, id: Date.now().toString() }
-        setMenuItems((prev) => [...prev, newItem])
+        setMenuItems((prev) => [...prev, savedItem])
         toast({
           title: "Success",
           description: "Menu item added successfully",
         })
       }
+
       setEditingItem(null)
       setIsAddingNew(false)
     } catch (error) {
+      console.error("Error saving menu item:", error)
       toast({
         title: "Error",
         description: "Failed to save menu item",
@@ -126,19 +117,47 @@ export default function MenuManagementPage() {
   }
 
   const handleDeleteItem = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this menu item?")) return
+
     try {
+      const response = await fetch(`/api/admin/menu/${id}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) throw new Error("Failed to delete menu item")
+
       setMenuItems((prev) => prev.filter((item) => item.id !== id))
       toast({
         title: "Success",
         description: "Menu item deleted successfully",
       })
     } catch (error) {
+      console.error("Error deleting menu item:", error)
       toast({
         title: "Error",
         description: "Failed to delete menu item",
         variant: "destructive",
       })
     }
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold">Menu Management</h1>
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center text-red-600">
+              <AlertCircle className="w-12 h-12 mx-auto mb-4" />
+              <p>{error}</p>
+              <Button onClick={fetchMenuItems} className="mt-4">
+                Try Again
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   if (isLoading) {
@@ -203,17 +222,22 @@ export default function MenuManagementPage() {
 
       {/* Menu Items Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item) => (
+        {menuItems.map((item) => (
           <Card key={item.id} className="overflow-hidden">
             <div className="relative h-48">
-              <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+              <Image
+                src={item.image || "/placeholder.svg?height=200&width=300"}
+                alt={item.name}
+                fill
+                className="object-cover"
+              />
               {item.popular && <Badge className="absolute top-2 left-2 bg-red-600">Popular</Badge>}
               {!item.available && <Badge className="absolute top-2 right-2 bg-gray-600">Unavailable</Badge>}
             </div>
             <CardHeader>
               <div className="flex justify-between items-start">
                 <CardTitle className="text-lg">{item.name}</CardTitle>
-                <span className="text-xl font-bold text-red-600">€{item.price}</span>
+                <span className="text-xl font-bold text-red-600">€{item.price.toFixed(2)}</span>
               </div>
               <CardDescription>{item.description}</CardDescription>
               <Badge variant="outline" className="w-fit">
@@ -241,6 +265,12 @@ export default function MenuManagementPage() {
         ))}
       </div>
 
+      {menuItems.length === 0 && !isLoading && (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">No menu items found.</p>
+        </div>
+      )}
+
       {/* Add/Edit Modal */}
       {(isAddingNew || editingItem) && (
         <MenuItemForm
@@ -262,7 +292,7 @@ function MenuItemForm({
   onCancel,
 }: {
   item: MenuItem | null
-  onSave: (item: Omit<MenuItem, "id">) => void
+  onSave: (item: Omit<MenuItem, "id" | "createdAt" | "updatedAt">) => void
   onCancel: () => void
 }) {
   const [formData, setFormData] = useState({
@@ -273,11 +303,17 @@ function MenuItemForm({
     image: item?.image || "",
     available: item?.available ?? true,
     popular: item?.popular || false,
+    ingredients: item?.ingredients?.join(", ") || "",
+    allergens: item?.allergens?.join(", ") || "",
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave(formData)
+    onSave({
+      ...formData,
+      ingredients: formData.ingredients ? formData.ingredients.split(",").map((s) => s.trim()) : [],
+      allergens: formData.allergens ? formData.allergens.split(",").map((s) => s.trim()) : [],
+    })
   }
 
   return (
@@ -343,6 +379,26 @@ function MenuItemForm({
                 value={formData.image}
                 onChange={(e) => setFormData((prev) => ({ ...prev, image: e.target.value }))}
                 placeholder="/images/item-name.jpeg"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="ingredients">Ingredients (comma separated)</Label>
+              <Input
+                id="ingredients"
+                value={formData.ingredients}
+                onChange={(e) => setFormData((prev) => ({ ...prev, ingredients: e.target.value }))}
+                placeholder="tomato, mozzarella, basil"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="allergens">Allergens (comma separated)</Label>
+              <Input
+                id="allergens"
+                value={formData.allergens}
+                onChange={(e) => setFormData((prev) => ({ ...prev, allergens: e.target.value }))}
+                placeholder="gluten, dairy"
               />
             </div>
 
