@@ -85,18 +85,20 @@ This application is optimized for deployment on Vercel:
 ## Project Structure
 
 \`\`\`
-src/
-├── app/                    # Next.js app router
-│   ├── admin/             # Admin dashboard pages
-│   ├── api/               # API routes
-│   ├── cart/              # Shopping cart page
-│   ├── menu/              # Menu page
-│   └── page.tsx           # Homepage
-├── presentation/
-│   ├── components/        # Reusable components
-│   ├── hooks/            # Custom React hooks
-│   └── lib/              # Utility functions
-└── scripts/              # Database initialization scripts
+app/
+├── admin/                 # Admin dashboard pages
+├── api/                   # API routes
+├── cart/                  # Shopping cart page
+├── menu/                  # Menu page
+├── globals.css            # Global styles
+├── layout.tsx             # Root layout
+└── page.tsx               # Homepage
+components/
+├── ui/                    # shadcn/ui components
+└── layout/                # Layout components
+lib/
+├── mongodb.ts             # Database connection
+└── utils.ts               # Utility functions
 \`\`\`
 
 ## License
